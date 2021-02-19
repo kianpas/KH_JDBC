@@ -3,6 +3,7 @@ package product.controller;
 import java.sql.Connection;
 import java.util.List;
 
+import product.model.exception.AmountException;
 import product.model.exception.ProductException;
 import product.model.service.ProductService;
 import product.model.vo.Product;
@@ -89,6 +90,9 @@ public class ProductController {
 		try {
 			result = productService.inputProdIo(prodIo);
 
+		} catch(AmountException e1) {
+			System.out.println(e1.getMessage());
+			
 		} catch (ProductException e) {
 			System.out.println(e.getMessage());
 		}

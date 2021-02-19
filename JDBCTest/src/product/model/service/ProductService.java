@@ -69,6 +69,7 @@ public class ProductService {
 	}
 
 	public List<ProductIo> selectAllDel() {
+		
 		Connection conn = getConnection();	
 		
 		List<ProductIo> list = productDao.selectAllDel(conn);
@@ -79,11 +80,18 @@ public class ProductService {
 	}
 
 	public int inputProdIo(ProductIo prodIo) {
-		Connection conn = getConnection();	
 		
+		Connection conn = getConnection();
+
 		int result = productDao.inputProdIo(conn, prodIo);
-		
+
 		close(conn);
+		
+		if(result>0)
+			commit(conn);
+		else
+			rollback(conn);
+		
 		return result;
 	}
 

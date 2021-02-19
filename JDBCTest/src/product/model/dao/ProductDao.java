@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import product.model.exception.AmountException;
 import product.model.exception.ProductException;
 import product.model.vo.Product;
 import product.model.vo.ProductIo;
@@ -267,8 +268,8 @@ public class ProductDao {
 		
 		try {
 			
-			if (prodIo.getStatus() == "I") {
-				System.out.println(prodIo);
+			if (prodIo.getStatus().equals("I")) {
+				
 				sql = prop.getProperty("inputProdIo");
 				pstmt = conn.prepareStatement(sql);
 
@@ -276,25 +277,29 @@ public class ProductDao {
 				pstmt.setInt(2, prodIo.getAmount());
 				pstmt.setString(3, prodIo.getStatus());
 
-			} else if(checkStock(prodIo)>prodIo.getAmount()){
-				
+			} else if (prodIo.getStatus().equals("O") && checkStock(prodIo) > prodIo.getAmount()) {
+
 				sql = prop.getProperty("outputProdIo");
 				pstmt = conn.prepareStatement(sql);
-				
+
 				pstmt.setString(1, prodIo.getProductId());
 				pstmt.setInt(2, prodIo.getAmount());
 				pstmt.setString(3, prodIo.getStatus());
+
+			} else if (prodIo.getStatus().equals("O") && checkStock(prodIo) < prodIo.getAmount()) {
 				
-			} else if(checkStock(prodIo)<prodIo.getAmount()) {
+				System.out.println("재고 수량의 오류");
 				System.exit(0);
+
 			}
-			
+
 			result = pstmt.executeUpdate();
-			
-			
+					
+				
 		} catch (SQLException e) {
+			
 			throw new ProductException("재고 입출고", e);
-			//e.printStackTrace();
+			
 		} finally {
 			close(pstmt);
 		}
@@ -306,8 +311,7 @@ public class ProductDao {
 		Connection conn = getConnection();
 		PreparedStatement pstmt = null;
 		String sql = prop.getProperty("checkStock");
-				
-				
+							
 		int result = 0;
 		ResultSet rset = null;
 
@@ -324,7 +328,10 @@ public class ProductDao {
 
 		} catch (SQLException e) {
 
-			e.printStackTrace();
+			throw new AmountException("재고 수량의 오류", e);
+
+			// System.exit(0);
+
 		} finally {
 			close(rset);
 			close(pstmt);

@@ -17,27 +17,27 @@ public class JDBCTemplate {
 	static String user;
 	static String password;
 	
-static {
-				
+	static {
+		
 		Properties prop = new Properties();
 		String fileName = "resources/data-source.properties";
 		try {
+
 			prop.load(new FileReader(fileName));
-			
+
 			driverClass = prop.getProperty("driverClass");
 			url = prop.getProperty("url");
 			user = prop.getProperty("user");
 			password = prop.getProperty("password");
-			
+
 		} catch (FileNotFoundException e1) {
-			
+
 			e1.printStackTrace();
 		} catch (IOException e1) {
-			
+
 			e1.printStackTrace();
 		}
-		
-		
+
 		try {
 			Class.forName(driverClass);
 		} catch (ClassNotFoundException e) {
@@ -47,32 +47,25 @@ static {
 
 	}
 	
-	
-	
 	public static Connection getConnection() {
-
+		
 		Connection conn = null;
 		
 		try {
-
-		
-			conn = DriverManager.getConnection(url, user, password);
 			
+			conn = DriverManager.getConnection(url, user, password);
 			conn.setAutoCommit(false);
-
 		} catch (SQLException e) {
-
+			
 			e.printStackTrace();
 		}
-
+				
 		return conn;
-
 	}
 	
 	public static void close(Connection conn) {
 
 		try {
-
 			if (conn != null)
 				conn.close();
 		} catch (SQLException e) {
@@ -91,11 +84,12 @@ static {
 
 			e.printStackTrace();
 		}
+		
 	}
 	
 	public static void close(PreparedStatement pstmt) {
+		
 		try {
-
 			if (pstmt != null)
 				pstmt.close();
 		} catch (SQLException e) {
@@ -106,15 +100,17 @@ static {
 	}
 
 	public static void commit(Connection conn) {
+		
 		try {
-			if(conn != null)
-			conn.commit();
+			if (conn != null)
+				conn.commit();
 		} catch (SQLException e) {
 
 			e.printStackTrace();
 		}
+		
 	}
-	
+
 	public static void rollback(Connection conn) {
 		try {
 			if(conn != null)
