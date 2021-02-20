@@ -267,9 +267,9 @@ public class ProductDao {
 		int result = 0;
 		
 		try {
-			
+
 			if (prodIo.getStatus().equals("I")) {
-				
+
 				sql = prop.getProperty("inputProdIo");
 				pstmt = conn.prepareStatement(sql);
 
@@ -277,7 +277,7 @@ public class ProductDao {
 				pstmt.setInt(2, prodIo.getAmount());
 				pstmt.setString(3, prodIo.getStatus());
 
-			} else if (prodIo.getStatus().equals("O") && checkStock(prodIo) > prodIo.getAmount()) {
+			} else if (prodIo.getStatus().equals("O")) {
 
 				sql = prop.getProperty("outputProdIo");
 				pstmt = conn.prepareStatement(sql);
@@ -286,16 +286,10 @@ public class ProductDao {
 				pstmt.setInt(2, prodIo.getAmount());
 				pstmt.setString(3, prodIo.getStatus());
 
-			} else if (prodIo.getStatus().equals("O") && checkStock(prodIo) < prodIo.getAmount()) {
-				
-				System.out.println("재고 수량의 오류");
-				System.exit(0);
-
 			}
 
 			result = pstmt.executeUpdate();
-					
-				
+
 		} catch (SQLException e) {
 			
 			throw new ProductException("재고 입출고", e);
@@ -307,8 +301,8 @@ public class ProductDao {
 		return result;
 	}
 
-	public int checkStock(ProductIo prodIo) {
-		Connection conn = getConnection();
+	public int checkStock(Connection conn, String productId) {
+		
 		PreparedStatement pstmt = null;
 		String sql = prop.getProperty("checkStock");
 							
@@ -318,7 +312,7 @@ public class ProductDao {
 		try {
 			pstmt = conn.prepareStatement(sql);
 
-			pstmt.setString(1, prodIo.getProductId());
+			pstmt.setString(1, productId);
 
 			rset = pstmt.executeQuery();
 
@@ -330,7 +324,6 @@ public class ProductDao {
 
 			throw new AmountException("재고 수량의 오류", e);
 
-			// System.exit(0);
 
 		} finally {
 			close(rset);
